@@ -23,3 +23,8 @@ def test_phase5_proxy_route_is_wired() -> None:
     response = client.get("/api/phase5/health")
     # Route exists; service may be unavailable in unit test context.
     assert response.status_code in (200, 503)
+
+
+def test_internal_proxy_route_is_wired() -> None:
+    response = client.get("/api/internal/analytics/health")
+    assert response.status_code in (200, 503)

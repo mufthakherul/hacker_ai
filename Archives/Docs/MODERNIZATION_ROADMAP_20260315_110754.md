@@ -978,8 +978,6 @@ All interfaces implement:
 
 ## 📐 Enhanced Project Structure
 
-> Status (2026-03): Core scaffold directories for this structure have been created to guide incremental migration while preserving backward compatibility with existing runtime paths.
-
 ```
 cosmicsec/
 ├── services/                          # Microservices

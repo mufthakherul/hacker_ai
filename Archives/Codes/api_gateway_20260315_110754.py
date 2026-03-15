@@ -68,11 +68,6 @@ SERVICE_URLS = {
     "integration": "http://integration-service:8008",
     "bugbounty": "http://bugbounty-service:8009",
     "phase5": "http://phase5-service:8010",
-    "notification": "http://notification-service:8011",
-    "analytics": "http://analytics-service:8012",
-    "workflow": "http://workflow-service:8013",
-    "exploit": "http://exploit-service:8014",
-    "phishing": "http://phishing-service:8015",
 }
 
 
@@ -1506,26 +1501,6 @@ async def phase5_proxy(request: Request, path: str):
             return JSONResponse(status_code=resp.status_code, content=resp.json())
         except Exception:
             raise HTTPException(status_code=503, detail="phase5 service unavailable")
-
-
-@app.api_route("/api/internal/{service}/{path:path}", methods=["GET", "POST"])
-@limiter.limit("120/minute")
-async def internal_service_proxy(request: Request, service: str, path: str):
-    allowed = {"notification", "analytics", "workflow", "exploit", "phishing"}
-    if service not in allowed:
-        raise HTTPException(status_code=404, detail="Unknown internal service")
-    params = dict(request.query_params)
-    url = f"{SERVICE_URLS[service]}/{path}"
-    async with httpx.AsyncClient() as client:
-        try:
-            if request.method == "GET":
-                resp = await client.get(url, params=params, timeout=15.0)
-            else:
-                data = await request.json()
-                resp = await client.post(url, json=data, params=params, timeout=20.0)
-            return JSONResponse(status_code=resp.status_code, content=resp.json())
-        except Exception:
-            raise HTTPException(status_code=503, detail=f"{service} service unavailable")
 
 
 if __name__ == "__main__":
